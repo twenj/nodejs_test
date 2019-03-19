@@ -1,0 +1,31 @@
+{
+  "name": "apitest",
+  "version": "0.0.1",
+  "description": "api test",
+  "main": "build/main.js",
+  "scripts": {
+    "tsc": "tsc",
+    "build": "gulp build",
+    "start": "node build/main.js",
+    "bs": "gulp build && node build/main.js"
+  },
+  "author": "twenj",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/hapi": "^18.0.1",
+    "@types/inert": "^5.1.2",
+    "@types/node": "^11.11.3",
+    "gulp": "^4.0.0",
+    "gulp-rimraf": "^0.2.2",
+    "gulp-shell": "^0.7.0",
+    "gulp-tslint": "^8.1.4",
+    "gulp-typescript": "^5.0.1",
+    "tsc": "^1.20150623.0",
+    "tslint": "^5.14.0",
+    "typescript": "^3.3.3333"
+  },
+  "dependencies": {
+    "hapi": "^18.1.0",
+    "inert": "^5.1.2"
+  }
+}
