@@ -20,7 +20,6 @@ export default class Request {
   }
 
   private methodGetParams(option, params) {
-    option['path'] += '?';
     let path = '';
     let commonGetParams = Config.commonGetParams;
 
@@ -34,7 +33,10 @@ export default class Request {
         path += '&' + item + '=' + escape(params[item]);
       }
     }
-    path = path.substring(1);
+    if (option['path'].indexOf('?') === -1) {
+      option['path'] += '?';
+      path = path.substring(1);
+    }
     option['path'] = option['path'] + path;
   }
 

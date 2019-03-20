@@ -25,7 +25,6 @@ class Request {
         return lastOption;
     }
     methodGetParams(option, params) {
-        option['path'] += '?';
         let path = '';
         let commonGetParams = Config.commonGetParams;
         for (let item in commonGetParams) {
@@ -38,7 +37,10 @@ class Request {
                 path += '&' + item + '=' + escape(params[item]);
             }
         }
-        path = path.substring(1);
+        if (option['path'].indexOf('?') === -1) {
+            option['path'] += '?';
+            path = path.substring(1);
+        }
         option['path'] = option['path'] + path;
     }
     request() {
