@@ -8,23 +8,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Config = require("../config");
 const http = require("http");
+const querystring = require("querystring");
+const Config = require("../config");
+const util_1 = require("./util");
 class Request {
     constructor() {
         this.reqList = {};
         this.responseList = {};
     }
     getOption(option) {
-        let lastOption = Config.commonOptions;
+        let lastOption = util_1.ObjectTool.deepCopy(Config.commonOptions);
         lastOption['path'] = option['path'];
         lastOption['method'] = option['method'];
-        if (lastOption['method'] === 'get' && option.hasOwnProperty('params')) {
-            this.methodGetParams(lastOption, option.params);
-        }
+        this.methodGetParams(lastOption, option.params);
         return lastOption;
     }
-    methodGetParams(option, params) {
+    methodGetParams(option, params = undefined) {
         let path = '';
         let commonGetParams = Config.commonGetParams;
         for (let item in commonGetParams) {
@@ -32,9 +32,11 @@ class Request {
                 path += '&' + item + '=' + escape(commonGetParams[item]);
             }
         }
-        for (let item in params) {
-            if (params.hasOwnProperty(item)) {
-                path += '&' + item + '=' + escape(params[item]);
+        if (option['method'] === 'get' && typeof params !== 'undefined') {
+            for (let item in params) {
+                if (params.hasOwnProperty(item)) {
+                    path += '&' + item + '=' + escape(params[item]);
+                }
             }
         }
         if (option['path'].indexOf('?') === -1) {
@@ -43,9 +45,27 @@ class Request {
         }
         option['path'] = option['path'] + path;
     }
-    request() {
+    request(key) {
         return __awaiter(this, void 0, void 0, function* () {
-            let option = this.getOption(Config.apiOptions[1]);
+            if (!Config.apiOptions.hasOwnProperty(key)) {
+                return false;
+            }
+            let option = this.getOption(Config.apiOptions[key]);
+            let postParams;
+            if (option['method'] === 'post') {
+                postParams = querystring.stringify(Config.apiOptions[key].params);
+                option['headers']['Content-Length'] = Buffer.byteLength(postParams);
+            }
+            // let option2 = {
+            //   host: 'api.backend.com',
+            //   port: '80',
+            //   method: 'post',
+            //   path: '/index.php?p=console&v=1&c=content&do=newResource&uid=20&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjIwLCJyZWFsX25hbWUiOiJcdTZkNGJcdThiZDUiLCJzYWx0IjoiZWJiNWFjIiwicHdkIjoiNzhCNEZDNzU0MDJDMDJENjcwNzEwOEZDNDIwODVDODQiLCJjcmVhdGVfdGltZSI6MTUzMzU0NjU0MywiaWF0IjoxNTUzMTMxMTMwLCJleHAiOjE1NTMxMzgzMzB9.v92RluCUJuwh_XG69cb94wgIlfOgo6svr4Ea7RETvfQ',
+            //   headers: {
+            //     'Content-Type': 'application/x-www-form-urlencoded',
+            //     'Content-Length': 9,
+            //   }
+            // };
             return new Promise((resolve, reject) => {
                 let data;
                 let req = http.request(option, (res) => {
@@ -68,6 +88,9 @@ class Request {
                 req.on('error', (e) => {
                     reject({ status: 0, msg: `problem with request: ${e.message}` });
                 });
+                if (option['method'] === "post") {
+                    req.write(postParams);
+                }
                 req.end();
             });
         });
@@ -77,10 +100,10 @@ class Request {
             for (let key in Config.apiOptions) {
                 if (Config.apiOptions.hasOwnProperty(key)) {
                     this.reqList[key] = this.getOption(Config.apiOptions[key]);
-                    this.responseList[key] = yield this.request();
+                    this.responseList[key] = yield this.request(key);
                 }
             }
-            console.log(this.reqList);
+            // console.log(this.reqList);
             console.log(this.responseList);
         });
     }

@@ -1,5 +1,7 @@
-import * as Config from "../config";
 import * as http from "http";
+import * as querystring from "querystring";
+import * as Config from "../config";
+import { ObjectTool } from "./util";
 
 export default class Request {
 
@@ -7,19 +9,17 @@ export default class Request {
   private responseList = {};
 
   public getOption(option: any) {
-    let lastOption = Config.commonOptions;
+    let lastOption = ObjectTool.deepCopy(Config.commonOptions);
 
     lastOption['path'] = option['path'];
     lastOption['method'] = option['method'];
 
-    if (lastOption['method'] === 'get' && option.hasOwnProperty('params')) {
-      this.methodGetParams(lastOption, option.params);
-    }
+    this.methodGetParams(lastOption, option.params);
 
     return lastOption;
   }
 
-  private methodGetParams(option, params) {
+  private methodGetParams(option, params = undefined) {
     let path = '';
     let commonGetParams = Config.commonGetParams;
 
@@ -28,11 +28,15 @@ export default class Request {
         path += '&' + item + '=' + escape(commonGetParams[item]);
       }
     }
-    for (let item in params) {
-      if (params.hasOwnProperty(item)) {
-        path += '&' + item + '=' + escape(params[item]);
+
+    if (option['method'] === 'get' && typeof params !== 'undefined') {
+      for (let item in params) {
+        if (params.hasOwnProperty(item)) {
+          path += '&' + item + '=' + escape(params[item]);
+        }
       }
     }
+
     if (option['path'].indexOf('?') === -1) {
       option['path'] += '?';
       path = path.substring(1);
@@ -40,8 +44,18 @@ export default class Request {
     option['path'] = option['path'] + path;
   }
 
-  public async request() {
-    let option = this.getOption(Config.apiOptions[1]);
+  public async request(key) {
+    if (!Config.apiOptions.hasOwnProperty(key)) {
+      return false;
+    }
+    let option = this.getOption(Config.apiOptions[key]);
+    let postParams;
+
+    if (option['method'] === 'post') {
+      postParams = querystring.stringify(Config.apiOptions[key].params);
+      option['headers']['Content-Length'] = Buffer.byteLength(postParams);
+    }
+
     return new Promise((resolve, reject) => {
       let data;
       let req = http.request(option, (res) => {
@@ -65,6 +79,10 @@ export default class Request {
         reject({status: 0, msg: `problem with request: ${e.message}`});
       });
 
+      if (option['method'] === "post") {
+        req.write(postParams);
+      }
+
       req.end();
     });
   }
@@ -73,10 +91,10 @@ export default class Request {
     for (let key in Config.apiOptions) {
       if (Config.apiOptions.hasOwnProperty(key)) {
         this.reqList[key] = this.getOption(Config.apiOptions[key]);
-        this.responseList[key] = await this.request();
+        this.responseList[key] = await this.request(key);
       }
     }
-    console.log(this.reqList);
+    // console.log(this.reqList);
     console.log(this.responseList);
   }
 }
