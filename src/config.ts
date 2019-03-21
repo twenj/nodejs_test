@@ -35,9 +35,6 @@ let apiOptions = {
   }
 };
 
-
-
-
 export {
   commonOptions,
   commonGetParams,
