@@ -56,16 +56,6 @@ class Request {
                 postParams = querystring.stringify(Config.apiOptions[key].params);
                 option['headers']['Content-Length'] = Buffer.byteLength(postParams);
             }
-            // let option2 = {
-            //   host: 'api.backend.com',
-            //   port: '80',
-            //   method: 'post',
-            //   path: '/index.php?p=console&v=1&c=content&do=newResource&uid=20&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjIwLCJyZWFsX25hbWUiOiJcdTZkNGJcdThiZDUiLCJzYWx0IjoiZWJiNWFjIiwicHdkIjoiNzhCNEZDNzU0MDJDMDJENjcwNzEwOEZDNDIwODVDODQiLCJjcmVhdGVfdGltZSI6MTUzMzU0NjU0MywiaWF0IjoxNTUzMTMxMTMwLCJleHAiOjE1NTMxMzgzMzB9.v92RluCUJuwh_XG69cb94wgIlfOgo6svr4Ea7RETvfQ',
-            //   headers: {
-            //     'Content-Type': 'application/x-www-form-urlencoded',
-            //     'Content-Length': 9,
-            //   }
-            // };
             return new Promise((resolve, reject) => {
                 let data;
                 let req = http.request(option, (res) => {

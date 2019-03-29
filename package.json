@@ -2,12 +2,12 @@
   "name": "apitest",
   "version": "0.0.1",
   "description": "api test",
-  "main": "build/main.js",
+  "main": "build/api/index.js",
   "scripts": {
     "tsc": "tsc",
     "build": "gulp build",
-    "start": "node build/main.js",
-    "bs": "gulp build && node build/main.js"
+    "start": "node build/api/index.js",
+    "bs": "gulp build && node build/api/index.js"
   },
   "author": "twenj",
   "license": "ISC",

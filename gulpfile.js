@@ -9,7 +9,7 @@ const shell = require('gulp-shell');
  * Remove build directory
  */
 gulp.task('clean', function () {
-  return gulp.src(outDir, { read: false })
+  return gulp.src('./build', { read: false })
     .pipe(rimraf());
 });
 
