@@ -1,3 +1,3 @@
 import { App } from "../src";
 
-App.start();
+App.start(__dirname);

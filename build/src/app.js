@@ -9,18 +9,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Hapi = require("hapi");
-const route_1 = require("./route");
+const controller_1 = require("./controller");
 class App {
-    static init() {
+    static init(appDir) {
+        this.appDir = appDir;
         this.server = new Hapi.Server({
             port: this.defaultOption.port,
             host: this.defaultOption.host
         });
     }
-    static start() {
+    static start(appDir) {
         return __awaiter(this, void 0, void 0, function* () {
-            this.init();
-            route_1.default.init(this.server);
+            this.init(appDir);
+            controller_1.default.init(this.server, appDir);
             yield this.server.start();
             console.log(`Server running at: ${this.server.info.uri}`);
             this.exit();

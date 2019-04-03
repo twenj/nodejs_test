@@ -1,26 +1,29 @@
 import * as Hapi from 'hapi';
-import Route from './route';
+import Controller from './controller';
 
 export default class App {
 
   private static server: Hapi.Server;
+  private static appDir: string;
 
   private static defaultOption = {
     host: 'localhost',
     port: 4170
   };
 
-  private static init() {
+  private static init(appDir: string) {
+    this.appDir = appDir;
+
     this.server = new Hapi.Server({
       port: this.defaultOption.port,
       host: this.defaultOption.host
     });
   }
 
-  public static async start() {
-    this.init();
+  public static async start(appDir) {
+    this.init(appDir);
 
-    Route.init(this.server);
+    Controller.init(this.server, appDir);
 
     await this.server.start();
     console.log(`Server running at: ${this.server.info.uri}`);
