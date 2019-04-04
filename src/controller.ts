@@ -1,20 +1,23 @@
 import {ServerRoute} from "hapi";
+import App from './app';
 
 export default class Controller {
   private static route: Array<ServerRoute> = [];
-  private static controllerDir: string = '';
 
-  public static init(server: any, appDir: string) {
+  public static init() {
     this.eachController();
-    server.route(this.route);
+    App.getIns().server.route(this.route);
   }
 
   public static eachController() {
-    let Controller = require(this.controllerDir + '/index/index');
-    Controller = new Controller.default;
     const handlerFunc = (request, h) => {
-      let res = Controller.index();
-      return res;
+        return 'Hello world';
     };
+    const route = {
+      path: '/',
+      method: 'GET',
+      handler: handlerFunc
+    };
+    this.route.push(route);
   }
 }

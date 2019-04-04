@@ -11,32 +11,41 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Hapi = require("hapi");
 const controller_1 = require("./controller");
 class App {
-    static init(appDir) {
-        this.appDir = appDir;
-        this.server = new Hapi.Server({
-            port: this.defaultOption.port,
-            host: this.defaultOption.host
-        });
+    constructor() {
+        this.appOptions = {
+            host: 'localhost',
+            port: 4170,
+            controllerDir: 'controllers'
+        };
     }
-    static start(appDir) {
+    static getIns() {
+        return this.ins;
+    }
+    static start(options) {
+        let app = new App();
+        app.appDir = options['appDir'];
+        app.controllerDir = app.appOptions.controllerDir;
+        app.server = new Hapi.Server({
+            port: app.appOptions.port,
+            host: app.appOptions.host
+        });
+        this.ins = app;
+        return app;
+    }
+    run() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.init(appDir);
-            controller_1.default.init(this.server, appDir);
+            controller_1.default.init();
             yield this.server.start();
             console.log(`Server running at: ${this.server.info.uri}`);
             this.exit();
         });
     }
-    static exit() {
+    exit() {
         process.on('unhandledRejection', (err) => {
             console.error(err);
             process.exit(1);
         });
     }
 }
-App.defaultOption = {
-    host: 'localhost',
-    port: 4170
-};
 exports.default = App;
 //# sourceMappingURL=app.js.map

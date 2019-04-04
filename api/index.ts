@@ -1,3 +1,4 @@
 import { App } from "../src";
 
-App.start(__dirname);
+const WebApp = App.start({appDir:__dirname});
+WebApp.run().then();

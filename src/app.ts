@@ -3,39 +3,49 @@ import Controller from './controller';
 
 export default class App {
 
-  private static server: Hapi.Server;
-  private static appDir: string;
+  private static ins: any;
 
-  private static defaultOption = {
+  private server: Hapi.Server;
+  private appDir: string;
+  private controllerDir: string;
+
+  private appOptions = {
     host: 'localhost',
-    port: 4170
+    port: 4170,
+    controllerDir: 'controllers'
   };
 
-  private static init(appDir: string) {
-    this.appDir = appDir;
-
-    this.server = new Hapi.Server({
-      port: this.defaultOption.port,
-      host: this.defaultOption.host
-    });
+  public static getIns() {
+    return this.ins;
   }
 
-  public static async start(appDir) {
-    this.init(appDir);
+  public static start(options: object) {
+    let app = new App();
+    app.appDir = options['appDir'];
+    app.controllerDir = app.appOptions.controllerDir;
 
-    Controller.init(this.server, appDir);
+    app.server = new Hapi.Server({
+      port: app.appOptions.port,
+      host: app.appOptions.host
+    });
 
+    this.ins = app;
+    return app;
+  }
+
+  public async run() {
+    Controller.init();
     await this.server.start();
     console.log(`Server running at: ${this.server.info.uri}`);
 
     this.exit();
   }
 
-  private static exit() {
+  private exit() {
     process.on('unhandledRejection', (err) => {
       console.error(err);
       process.exit(1);
-    });
-  }
+   });
+ }
 
 }
