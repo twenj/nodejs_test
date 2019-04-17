@@ -1,6 +1,7 @@
 export default class Index {
+  public test = 'hahaha';
   public index() {
-    console.log(111);
+    console.log(this);
     return 'Hello world';
   }
 }

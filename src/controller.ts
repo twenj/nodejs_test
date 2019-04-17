@@ -1,8 +1,9 @@
-import {ServerRoute} from "hapi";
+import * as Hapi from 'hapi';
+import { Fs } from "../src/lib/util";
 import App from './app';
 
 export default class Controller {
-  private static route: Array<ServerRoute> = [];
+  private static route: Array<Hapi.ServerRoute> = [];
 
   public static init() {
     this.eachController();
@@ -10,14 +11,48 @@ export default class Controller {
   }
 
   public static eachController() {
-    const handlerFunc = (request, h) => {
-        return 'Hello world';
-    };
-    const route = {
-      path: '/',
-      method: 'GET',
-      handler: handlerFunc
-    };
-    this.route.push(route);
+    let appIns = App.getIns();
+
+    let controllerDir = appIns.appDir + '/' + appIns.controllerDir;
+    let controllerList = Fs.readDir(controllerDir);
+
+    let controller;
+    let routeArr = this.route;
+
+    controllerList.forEach(function (controllerPath) {
+
+      let c = require(controllerPath).default;
+      let methods = Object.getOwnPropertyNames(c.prototype);
+
+      controller = new c();
+
+      methods.forEach(function (method) {
+
+        if (method !== 'constructor') {
+
+          let handlerFunc = (request: Hapi.Request, h: Hapi.ResponseToolkit) => {
+            return controller[method]();
+          };
+
+          let path = '';
+          for (let i = 2; i > 0; i--) {
+            let pos = controllerPath.lastIndexOf('/');
+            let name = controllerPath.substr(pos + 1);
+            controllerPath = controllerPath.substr(0, pos);
+            path += '/' + name;
+          }
+          path += '/' + method;
+
+          let route = {
+            path: path,
+            method: 'GET',
+            handler: handlerFunc
+          };
+          routeArr.push(route);
+        }
+      });
+
+    });
+
   }
 }
