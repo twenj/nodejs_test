@@ -5,7 +5,6 @@ const app_1 = require("./app");
 class Controller {
     static init() {
         this.eachController();
-        console.log(this.route);
         app_1.default.getIns().server.route(this.route);
     }
     static eachController() {
