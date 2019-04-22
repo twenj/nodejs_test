@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const Hapi = require("hapi");
 const controller_1 = require("./controller");
+const SocketIo = require("socket.io");
 class App {
     constructor() {
         this.appOptions = {
@@ -29,6 +30,7 @@ class App {
             port: app.appOptions.port,
             host: app.appOptions.host
         });
+        app.io = SocketIo(app.server.listener);
         this.ins = app;
         return app;
     }

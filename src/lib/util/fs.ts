@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import {merge} from "hoek";
+import { merge } from "hoek";
 export default class Fs {
     public static readDir(dir: string) {
         let fileArr: Array<string> = [];

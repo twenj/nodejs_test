@@ -1,5 +1,6 @@
 import * as Hapi from 'hapi';
 import Controller from './controller';
+import * as SocketIo from 'socket.io';
 
 export default class App {
 
@@ -8,6 +9,7 @@ export default class App {
   private server: Hapi.Server;
   private appDir: string;
   private controllerDir: string;
+  private io: SocketIo.Server;
 
   private appOptions = {
     host: 'localhost',
@@ -28,6 +30,8 @@ export default class App {
       port: app.appOptions.port,
       host: app.appOptions.host
     });
+
+    app.io = SocketIo(app.server.listener);
 
     this.ins = app;
     return app;
