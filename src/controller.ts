@@ -16,7 +16,6 @@ export default class Controller {
     let controllerDir = appIns.appDir + '/' + appIns.controllerDir;
     let controllerList = Fs.readDir(controllerDir);
 
-    let controller;
     let routeArr = this.route;
 
     controllerList.forEach(function (controllerPath) {
@@ -24,7 +23,7 @@ export default class Controller {
       let c = require(controllerPath).default;
       let methods = Object.getOwnPropertyNames(c.prototype);
 
-      controller = new c();
+      let controller = new c();
 
       methods.forEach(function (method) {
 

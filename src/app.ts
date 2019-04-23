@@ -1,15 +1,16 @@
 import * as Hapi from 'hapi';
-import Controller from './controller';
 import * as SocketIo from 'socket.io';
+import Controller from './controller';
+import Socket from './socket';
 
 export default class App {
 
   private static ins: any;
+  private static io: SocketIo.Server;
 
   private server: Hapi.Server;
   private appDir: string;
   private controllerDir: string;
-  private io: SocketIo.Server;
 
   private appOptions = {
     host: 'localhost',
@@ -19,6 +20,10 @@ export default class App {
 
   public static getIns() {
     return this.ins;
+  }
+
+  public static getSocket() {
+    return this.io;
   }
 
   public static start(options: object) {
@@ -31,14 +36,14 @@ export default class App {
       host: app.appOptions.host
     });
 
-    app.io = SocketIo(app.server.listener);
-
     this.ins = app;
+    this.io = SocketIo(app.server.listener);
     return app;
   }
 
   public async run() {
     Controller.init();
+    Socket.init();
     await this.server.start();
     console.log(`Server running at: ${this.server.info.uri}`);
 

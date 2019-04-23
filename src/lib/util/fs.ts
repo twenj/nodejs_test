@@ -14,7 +14,7 @@ export default class Fs {
 
             if (isDirectory === true) {
                 let subFileArr = Fs.readDir(filePath);
-                fileArr = merge(fileArr, subFileArr);
+                merge(fileArr, subFileArr);
             } else {
                 if (path.extname(filePath) === '.js') {
                     let fileName = path.basename(filePath, '.js');

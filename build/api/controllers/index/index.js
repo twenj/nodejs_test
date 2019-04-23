@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-class Index {
+const core_1 = require("../../../src/core");
+class Index extends core_1.Controller {
+    constructor() {
+        super();
+    }
     index() {
         return 'Hello world';
     }

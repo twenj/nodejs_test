@@ -12,7 +12,7 @@ class Fs {
             let isDirectory = stat.isDirectory();
             if (isDirectory === true) {
                 let subFileArr = Fs.readDir(filePath);
-                fileArr = hoek_1.merge(fileArr, subFileArr);
+                hoek_1.merge(fileArr, subFileArr);
             }
             else {
                 if (path.extname(filePath) === '.js') {

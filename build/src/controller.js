@@ -11,12 +11,11 @@ class Controller {
         let appIns = app_1.default.getIns();
         let controllerDir = appIns.appDir + '/' + appIns.controllerDir;
         let controllerList = util_1.Fs.readDir(controllerDir);
-        let controller;
         let routeArr = this.route;
         controllerList.forEach(function (controllerPath) {
             let c = require(controllerPath).default;
             let methods = Object.getOwnPropertyNames(c.prototype);
-            controller = new c();
+            let controller = new c();
             methods.forEach(function (method) {
                 if (method !== 'constructor') {
                     let handlerFunc = (request, h) => {
